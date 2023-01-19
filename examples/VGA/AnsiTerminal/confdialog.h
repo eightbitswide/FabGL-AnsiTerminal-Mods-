@@ -96,7 +96,7 @@ static const float  STOPBITS_FLOAT[] = { 1.0, 1.5, 2.0, 3.0 };
 
 static const char * FLOWCTRL_STR[]   = { "None", "XON/XOFF", "RTS/CTS", "Combi" };
 
-constexpr int RESOLUTION_DEFAULT           = 5;
+constexpr int RESOLUTION_DEFAULT           = 7;
 static const char * RESOLUTIONS_STR[]      = { "1280x768, B&W",           // 0
                                                "1024x720, 4 Colors",      // 1
                                                "800x600, 8 Colors",       // 2
@@ -106,6 +106,7 @@ static const char * RESOLUTIONS_STR[]      = { "1280x768, B&W",           // 0
                                                "640x350, 16 Colors",      // 6
                                                "512x384, 64 Colors",      // 7
                                                "400x300, 64 Colors",      // 8
+                                               "320x200, 64 Colors",      // 9     'Added by Eightbitswide
                                               };
 static const char * RESOLUTIONS_CMDSTR[]   = { "1280x768x2",              // 0
                                                "1024x720x4",              // 1
@@ -116,6 +117,7 @@ static const char * RESOLUTIONS_CMDSTR[]   = { "1280x768x2",              // 0
                                                "640x350x16",              // 6
                                                "512x384x64",              // 7
                                                "400x300x64",              // 8
+                                               "320x200x64",              // 9      'Added by Eightbitswide
                                             };
 enum class ResolutionController { VGAController, VGA16Controller, VGA8Controller, VGA2Controller, VGA4Controller };
 static const ResolutionController RESOLUTIONS_CONTROLLER[] = { ResolutionController::VGA2Controller,     // 0
@@ -127,6 +129,7 @@ static const ResolutionController RESOLUTIONS_CONTROLLER[] = { ResolutionControl
                                                                ResolutionController::VGA16Controller,    // 6
                                                                ResolutionController::VGAController,      // 7
                                                                ResolutionController::VGAController,      // 8
+                                                               ResolutionController::VGAController,      // 9    'Added by Eightbitswide
                                                              };
 static const char * RESOLUTIONS_MODELINE[] = { SVGA_1280x768_50Hz,        // 0
                                                SVGA_1024x768_75Hz,        // 1
@@ -137,6 +140,7 @@ static const char * RESOLUTIONS_MODELINE[] = { SVGA_1280x768_50Hz,        // 0
                                                VGA_640x350_70HzAlt1,      // 6
                                                VGA_512x384_60Hz,          // 7
                                                VGA_400x300_60Hz,          // 8
+                                               VGA_320x200_70Hz,          // 9     'Added by Eightbitswide
 };
 static const int16_t RESOLUTIONS_HEIGHT[] = {   -1,        // 0
                                                720,        // 1
@@ -147,6 +151,7 @@ static const int16_t RESOLUTIONS_HEIGHT[] = {   -1,        // 0
                                                 -1,        // 6
                                                 -1,        // 7
                                                 -1,        // 8
+                                                -1,        // 9    'Added by Tom Lake
 };
 constexpr int RESOLUTIONS_COUNT            = sizeof(RESOLUTIONS_STR) / sizeof(char const *);
 
@@ -161,7 +166,7 @@ static const fabgl::FontInfo * FONTS_INFO[] = { nullptr, &fabgl::FONT_4x6, &fabg
                                                &fabgl::FONT_9x18, &fabgl::FONT_10x20, &fabgl::FONT_BIGSERIF_8x14, &fabgl::FONT_BIGSERIF_8x16, &fabgl::FONT_BLOCK_8x14,
                                                &fabgl::FONT_BROADWAY_8x14, &fabgl::FONT_COMPUTER_8x14, &fabgl::FONT_COURIER_8x14,
                                                &fabgl::FONT_LCD_8x14, &fabgl::FONT_OLDENGL_8x16, &fabgl::FONT_SANSERIF_8x14, &fabgl::FONT_SANSERIF_8x16,
-                                               &fabgl::FONT_SLANT_8x14, &fabgl::FONT_WIGGLY_8x16 };
+                                               &fabgl::FONT_SLANT_8x14, &fabgl::FONT_WIGGLY_8x16};
 constexpr int       FONTS_COUNT             = sizeof(FONTS_STR) / sizeof(char const *);
 
 static const char * COLUMNS_STR[] = { "Max", "80", "132" };
@@ -515,6 +520,14 @@ struct ConfDialogApp : public uiApp {
     return (TermType) preferences.getInt(PREF_TERMTYPE, 7);    // default 7 = ANSILegacy
   }
 
+ // 1=ADM 3A
+ // 2=ADM 31
+ // 3=Hazeltine 1500
+ // 4=Osborne
+ // 5=Kaypro
+ // 6=VT52
+ // 7=Ansi
+
 
   static int getKbdLayoutIndex() {
     return preferences.getInt(PREF_KBDLAYOUT, 3);              // default 3 = "US"
@@ -542,7 +555,7 @@ struct ConfDialogApp : public uiApp {
 
 
   static FlowControl getFlowCtrl() {
-    return (FlowControl) preferences.getInt(PREF_FLOWCTRL, 0); // default 0 = no flow control
+    return (FlowControl) preferences.getInt(PREF_FLOWCTRL, 1); // default 0 = no flow control
   }
 
 
@@ -552,7 +565,7 @@ struct ConfDialogApp : public uiApp {
 
 
   static Color getFGColor() {
-    return (Color) preferences.getInt(PREF_FGCOLOR, (int)Color::BrightGreen);
+    return (Color) preferences.getInt(PREF_FGCOLOR, (int)Color::White);  //BrightGreen
   }
 
 

@@ -68,7 +68,7 @@ fabgl::SerialPortTerminalConnector  SerialPortTerminalConnector;
 void setup()
 {
   #if FABGLIB_TERMINAL_DEBUG_REPORT
-  Serial.begin(115200); delay(500); Serial.write("\n\nReset\n\n"); // DEBUG ONLY
+  Serial.begin(115200-+-); delay(500); Serial.write("\n\nReset\n\n"); // DEBUG ONLY
   #endif
 
   disableCore0WDT();
@@ -99,6 +99,9 @@ void setup()
   else
     PS2Controller.begin(PS2Preset::KeyboardPort0_MousePort1);
 
+
+ 
+
   ConfDialogApp::setupDisplay();
 
   ConfDialogApp::loadConfiguration();
@@ -111,19 +114,19 @@ void setup()
   Terminal.enableCursor(true);
 
   if (ConfDialogApp::getBootInfo() == BOOTINFO_ENABLED) {
-    Terminal.write("* *  FabGL - Serial Terminal                            * *\r\n");
-    Terminal.write("* *  2019-2022 by Fabrizio Di Vittorio - www.fabgl.com  * *\r\n\n");
-    Terminal.printf("Version            : %d.%d\r\n", TERMVERSION_MAJ, TERMVERSION_MIN);
-    Terminal.printf("Screen Size        : %d x %d\r\n", DisplayController->getViewPortWidth(), DisplayController->getViewPortHeight());
-    Terminal.printf("Terminal Size      : %d x %d\r\n", Terminal.getColumns(), Terminal.getRows());
-    Terminal.printf("Keyboard Layout    : %s\r\n", PS2Controller.keyboard()->isKeyboardAvailable() ? SupportedLayouts::names()[ConfDialogApp::getKbdLayoutIndex()] : "No Keyboard");
-    //Terminal.printf("Mouse              : %s\r\n", PS2Controller.mouse()->isMouseAvailable() ? "Yes" : "No");
-    Terminal.printf("Terminal Type      : %s\r\n", SupportedTerminals::names()[(int)ConfDialogApp::getTermType()]);
+    Terminal.write("Ansi Terminal by Fabrizio Di Vittorio \r\n");
+    Terminal.write("Modifications by Eightbitswide \r\n\n");
+    //Terminal.printf("Version            : %d.%d\r\n", TERMVERSION_MAJ, TERMVERSION_MIN);
+    Terminal.printf("Screen Size : %d x %d\r\n", DisplayController->getViewPortWidth(), DisplayController->getViewPortHeight());
+    Terminal.printf("Terminal    : %d x %d\r\n", Terminal.getColumns(), Terminal.getRows());
+    Terminal.printf("Keyboard    : %s\r\n", PS2Controller.keyboard()->isKeyboardAvailable() ? SupportedLayouts::names()[ConfDialogApp::getKbdLayoutIndex()] : "No Keyboard");
+    Terminal.printf("Mouse       : %s\r\n", PS2Controller.mouse()->isMouseAvailable() ? "Yes" : "No");
+    Terminal.printf("Term Type   : %s\r\n\n", SupportedTerminals::names()[(int)ConfDialogApp::getTermType()]);
     //Terminal.printf("Free Memory        : %d bytes\r\n", heap_caps_get_free_size(MALLOC_CAP_32BIT));
-    Terminal.printf("Serial Port        : %s\r\n", UARTPORT_STR[ConfDialogApp::getUARTPortIndex()]);
-    Terminal.printf("Serial Parameters  : %s\r\n", ConfDialogApp::getSerParamStr());
-
-    Terminal.write("\r\nPress F12 to change terminal configuration and CTRL-ALT-F12 to reset settings\r\n\n");
+    Terminal.printf("Serial Port : %s\r\n", UARTPORT_STR[ConfDialogApp::getUARTPortIndex()]);
+    Terminal.printf("Parameters  : %s\r\n", ConfDialogApp::getSerParamStr());
+    Terminal.write("\r\n");
+    //Terminal.write("\r\n\r\n\n");
   } else if (ConfDialogApp::getBootInfo() == BOOTINFO_TEMPDISABLED) {
     preferences.putInt(PREF_BOOTINFO, BOOTINFO_ENABLED);
   }
@@ -171,15 +174,49 @@ void setup()
 
   // onUserSequence is triggered whenever a User Sequence has been received (ESC + '_#' ... '$'), where '...' is sent here
   Terminal.onUserSequence = [&](char const * seq) {
-    // 'R': change resolution (for example: ESC + "_#R512x384x64$")
+
+    char apply[] = "APPLYSETTINGS";      // ESC + "_#APPLYSETTINGS$" 
+    if (strcmp(apply, seq) == 0) {
+       //found apply and restart command
+       if (ConfDialogApp::getBootInfo() == BOOTINFO_ENABLED)
+          preferences.putInt(PREF_BOOTINFO, BOOTINFO_TEMPDISABLED);
+       ESP.restart();
+    }
+
+    
+    // Change resolution (for example: ESC + "_#512x384x64$") , Use ESC + "_#APPLYSETTINGS$" to Apply.
+    
+    // Usable options:
+    // "1280x768x2","1024x720x4","800x600x8","720x520x16","640x480@73x16"
+    // "640x480@60x16","640x350x16","512x384x64","400x300x64", "320x200x64"
+     
     for (int i = 0; i < RESOLUTIONS_COUNT; ++i)
       if (strcmp(RESOLUTIONS_CMDSTR[i], seq) == 0) {
         // found resolution string
         preferences.putInt(PREF_TEMPRESOLUTION, i);
-        if (ConfDialogApp::getBootInfo() == BOOTINFO_ENABLED)
-          preferences.putInt(PREF_BOOTINFO, BOOTINFO_TEMPDISABLED);
-        ESP.restart();
+        //if (ConfDialogApp::getBootInfo() == BOOTINFO_ENABLED)
+        //  preferences.putInt(PREF_BOOTINFO, BOOTINFO_TEMPDISABLED);
+        //ESP.restart();
       }
+      
+    // Change font (for example: ESC + "_#VGA 8x8$"), Use ESC + "_#APPLYSETTINGS#" to Apply.
+        
+    // Usable options:
+    // "Auto", "VGA 4x6", "VGA 5x7", "VGA 5x8", "VGA 6x8", "VGA 6x9", "VGA 6x10", "VGA 6x12", "VGA 6x13",
+    // "VGA 7x13", "VGA 7x14", "VGA 8x8", "VGA 8x9", "VGA 8x13", "VGA 8x14", "VGA 8x16", "VGA 8x19", "VGA 9x15",
+    // "VGA 9x18", "VGA 10x20", "BigSerif 8x14", "BigSerif 8x16", "Block 8x14", "Broadway 8x14",
+    // "Computer 8x14", "Courier 8x14", "LCD 8x14", "Old English 8x16", "Sans Serif 8x14", "Sans Serif 8x16",
+    // "Slant 8x14", "Wiggly 8x16" 
+    
+    for (int i = 0; i < FONTS_COUNT; ++i)
+      if (strcmp(FONTS_STR[i], seq) == 0) {
+        // found font string
+        preferences.putInt(PREF_FONT, i);
+        //if (ConfDialogApp::getBootInfo() == BOOTINFO_ENABLED)
+        //  preferences.putInt(PREF_BOOTINFO, BOOTINFO_TEMPDISABLED);
+        //ESP.restart();
+      }
+      
   };
 }
 
