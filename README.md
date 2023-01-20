@@ -6,7 +6,7 @@
 This fork is for modifications of AnsiTerminal.  All original ESC-code functionality is maintained.
 
    * Changed VGA8x8 font to PETSCII font.
-   * Added ESC_#{TERMINAL}$ for resolution selection.
+   * Added ESC_#{RESOLUTION}$ for resolution selection.
    * Added ESC_#{FONT}$ for font selection.
    * Added ESC_#APPLYSETTINGS$ to switch font/resoltion.
    * Added 320x200x64 resolution to option menu.
