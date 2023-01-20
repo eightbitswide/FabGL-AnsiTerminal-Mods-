@@ -93,7 +93,9 @@ Again, a small delay in the code will allow the monitor to catch up when these s
 Additional: <BR>
 In 320x200x64 mode, the GUI menu does not fit the screen.  You can however select a new resolution and press F10 to save/exit. 
   
-
+Additional: <BR>
+The original "VGA 8x8" font has been altered. A preview of the new font can be seen on this link: <BR>
+https://github.com/eightbitswide/FabGl_font_8x8_replacement/blob/main/petscii_8x8_font_sample.jpg
 
 
 ### Discussion on the changes being made are on:
