@@ -12,6 +12,8 @@ This fork is for modifications of AnsiTerminal.  All original ESC-code functiona
    * Added 320x200x64 resolution to option menu.
    * Altered the boot greeting to fit cleanly in all resolutions.
 
+<B>FabGL Specific ESC-codes:</B> http://www.fabglib.org/special_term_escapes.html
+
 ### Resolution Selection Notes:
 The following resolution settings are avaible by ESC code:  (ESC "_#{RESOLUTION}$" : ESC "_#APPLYSETTINGS$")
 
