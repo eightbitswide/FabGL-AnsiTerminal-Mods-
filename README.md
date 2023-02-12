@@ -29,10 +29,10 @@ The following resolution settings are avaible by ESC code:  (ESC "_#{RESOLUTION}
   * 320x200x64
 
 Usage Example: 
-
+<PRE>
 10 PRINT CHR$(27)+"_#320x200x64$" <BR>
 20 PRINT CHR$(27)+"_#APPLYSETTINGS$"
-
+</PRE>
 It is a good idea to apply some type of delay for the program continues to allow the monitor to catch up.
   
   
@@ -72,22 +72,22 @@ The following font settings are are avaible by ESC code:  (ESC "_#{FONT}$" : ESC
   * Wiggly 8x16 
   
 Usage Example: 
-
+<PRE>
 10 PRINT CHR$(27)+"_#VGA 8x8$" <BR>
 20 PRINT CHR$(27)+"_#APPLYSETTINGS$"
-
+</PRE>
 It is a good idea to apply some type of delay for the program continues to allow the monitor to catch up.
   
 ### Misc Notes:
 
 If using resolution and font settings together, only a single _#APPLYSETTINGS$ is required.
-  
+<PRE>  
 Usage Example:
   
 10 PRINT CHR$(27)+"_#VGA 8x8$" <BR>
 20 PRINT CHR$(27)+"_#320x200x64$" <BR>
 30 PRINT CHR$(27)+"_#APPLYSETTINGS$"  
-
+</PRE>
 Again, a small delay in the code will allow the monitor to catch up when these settings are applied.
   
   
